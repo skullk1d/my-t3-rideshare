@@ -1,4 +1,18 @@
-# Create T3 App
+# Auction Demo
+
+## Server / Client
+
+```
+npm install
+
+./start-database.sh
+
+npm run db:push
+
+npm run dev
+```
+
+# Create T3 App (Original README)
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
