@@ -25,30 +25,30 @@ enum Status {
     Rejected
 }
 
-model User {
-    id         Int          @id @default(autoincrement())
-    name       String
-    email      String
-    Bid        Bid[]
-    Collection Collection[]
+model Users {
+    id          Int           @id @default(autoincrement())
+    name        String
+    email       String
+    Bids        Bids[]
+    Collections Collections[]
 }
 
-model Collection {
+model Collections {
     id              String @id @default(uuid())
     name            String
     description     String
     quantity_stocks Int
     price           Float
-    user            User   @relation(fields: [user_id], references: [id])
+    user            Users  @relation(fields: [user_id], references: [id])
     user_id         Int
-    Bid             Bid[]
+    Bids            Bids[]
 }
 
-model Bid {
-    id            String     @id @default(uuid())
-    collection    Collection @relation(fields: [collection_id], references: [id])
+model Bids {
+    id            String      @id @default(uuid())
+    collection    Collections @relation(fields: [collection_id], references: [id])
     collection_id String
-    user          User       @relation(fields: [user_id], references: [id])
+    user          Users       @relation(fields: [user_id], references: [id])
     user_id       Int
     status        Status
 }

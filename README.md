@@ -1,6 +1,6 @@
 # Auction Demo
 
-## Server / Client
+## Database / Server / Client
 
 ```
 npm install
@@ -8,6 +8,8 @@ npm install
 ./start-database.sh
 
 npm run db:push
+
+./fill-database.sh
 
 npm run dev
 ```
