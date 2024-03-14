@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-const idListSchema = z.array(z.number());
+export const idListSchema = z.array(z.number());
 
 export default createTRPCRouter({
   get: publicProcedure.input(idListSchema).query(async ({ input, ctx }) => {
