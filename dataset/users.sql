@@ -1,5 +1,3 @@
--- Quotes are necessary to escape "Users" keyword
-
 insert into "Users" (id, name, email) values (1, 'cadderley0', 'fbonnin0@zimbio.com');
 insert into "Users" (id, name, email) values (2, 'wdomerq1', 'hverbeke1@prlog.org');
 insert into "Users" (id, name, email) values (3, 'mocullinane2', 'ehobden2@google.ru');

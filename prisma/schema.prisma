@@ -34,7 +34,7 @@ model Users {
 }
 
 model Collections {
-    id              String @id @default(uuid())
+    id              Int    @id @default(autoincrement())
     name            String
     description     String
     quantity_stocks Int
@@ -45,10 +45,11 @@ model Collections {
 }
 
 model Bids {
-    id            String      @id @default(uuid())
+    id            Int         @id @default(autoincrement())
+    price         Float
+    status        Status
     collection    Collections @relation(fields: [collection_id], references: [id])
-    collection_id String
+    collection_id Int
     user          Users       @relation(fields: [user_id], references: [id])
     user_id       Int
-    status        Status
 }
