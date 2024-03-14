@@ -1,4 +1,6 @@
-import { postRouter } from "~/server/api/routers/post";
+import users from "~/server/api/routers/users";
+import collections from "~/server/api/routers/collections";
+import bids from "~/server/api/routers/bids";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -6,8 +8,11 @@ import { createTRPCRouter } from "~/server/api/trpc";
  *
  * All routers added in /api/routers should be manually added here.
  */
+// NOTE: Artificial latency of 1000ms
 export const appRouter = createTRPCRouter({
-  post: postRouter,
+  users,
+  collections,
+  bids,
 });
 
 // export type definition of API
