@@ -15,6 +15,9 @@ export const collectionSchema = z.object({
 export const collectionUpdateSchema = collectionSchema.merge(
   z.object({
     id: z.number(),
+    price: z.number().optional(),
+    user_id: z.number().optional(),
+    Bids: z.array(bidUpdateSchema).optional(),
   }),
 );
 
@@ -87,17 +90,31 @@ export default createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      // Find original to fill partial input with complete record
+      const existingCollection = await ctx.db.collections.findFirst({
+        where: {
+          id: input.id,
+        },
+        include: {
+          Bids: true,
+        },
+      });
+      const updatedCollection = {
+        ...existingCollection,
+        ...collectionSchema.parse(input),
+      };
+
       return ctx.db.collections.update({
         where: {
           id: input.id,
         },
         data: {
-          ...collectionSchema.parse(input),
+          ...updatedCollection,
           Bids: {
             updateMany: {
-              data: z.array(bidUpdateSchema).parse(input.Bids),
+              data: z.array(bidUpdateSchema).parse(updatedCollection.Bids),
               where: {
-                id: { in: input.Bids.map(({ id }) => id) },
+                id: { in: updatedCollection.Bids.map(({ id }) => id) },
               },
             },
           },
