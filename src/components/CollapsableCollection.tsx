@@ -21,11 +21,13 @@ const CollapsableCollection = (props: Props) => {
       onOpenChange={setOpen}
     >
       <div
-        className="my-4 grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+        className="my-4 grid grid-cols-4 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
         style={{
-          display: "flex",
-          alignItems: "center",
+          display: "grid",
           justifyContent: "space-between",
+          justifyItems: "stretch",
+          alignContent: "center",
+          alignItems: "cetner",
         }}
       >
         <h3 className="Text" style={{ color: "black" }}>
@@ -34,7 +36,30 @@ const CollapsableCollection = (props: Props) => {
         <span className="Text" style={{ color: "black" }}>
           {collection.description}
         </span>
-        <Collapsible.Trigger asChild>
+        <div
+          style={{
+            justifySelf: "end",
+          }}
+        >
+          <button
+            className="rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
+            onClick={() => void 0}
+          >
+            Edit
+          </button>
+          <button
+            className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+            onClick={() => void 0}
+          >
+            Delete
+          </button>
+        </div>
+        <Collapsible.Trigger
+          asChild
+          style={{
+            justifySelf: "end",
+          }}
+        >
           <button className="IconButton">
             {open ? <Cross2Icon /> : <RowSpacingIcon />}
           </button>
@@ -43,7 +68,10 @@ const CollapsableCollection = (props: Props) => {
 
       <Collapsible.Content>
         {collection.Bids.map((bid) => (
-          <div key={bid.id}>
+          <div
+            key={bid.id}
+            className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+          >
             <div className="Repository">
               <span className="Text">{bid.price}</span>
             </div>
