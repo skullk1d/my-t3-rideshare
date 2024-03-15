@@ -20,13 +20,13 @@ export default createTRPCRouter({
     // Get one or many depending on input
     let res;
 
-    if (input) {
+    if (input && input.length) {
       // One or Many
       if (input.length === 1) {
         res = ctx.db.bids.findFirst({
           orderBy: { id: "asc" },
         });
-      } else if (input.length) {
+      } else {
         res = ctx.db.bids.findMany({
           where: {
             id: { in: input },
