@@ -29,6 +29,7 @@ export default createTRPCRouter({
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    // NOTE: Intentionally not "include"-ing collection relational data to reduce overhead
     return res;
   }),
   // TODO:

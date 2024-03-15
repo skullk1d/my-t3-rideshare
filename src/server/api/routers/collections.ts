@@ -28,17 +28,27 @@ export default createTRPCRouter({
       if (input.length === 1) {
         res = ctx.db.collections.findFirst({
           orderBy: { id: "asc" },
+          include: {
+            Bids: true,
+          },
         });
       } else {
         res = ctx.db.collections.findMany({
           where: {
             id: { in: input },
           },
+          include: {
+            Bids: true,
+          },
         });
       }
     } else {
       // All
-      res = ctx.db.collections.findMany();
+      res = ctx.db.collections.findMany({
+        include: {
+          Bids: true,
+        },
+      });
     }
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
