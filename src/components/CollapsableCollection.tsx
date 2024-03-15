@@ -3,19 +3,22 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { RowSpacingIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { Bids, Collections } from "@prisma/client";
 import { api } from "~/utils/api";
+import BidDialog from "./BidDialog";
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
 type Props = {
   collection: Collections & { Bids: Array<Bids> };
   isOpen: boolean;
+  isOwner: boolean;
 };
 
 const CollapsableCollection = (props: Props) => {
-  const { collection, isOpen } = props;
+  const { collection, isOpen, isOwner } = props;
 
   const [currentCollection, setCurrentCollection] = useState(collection);
   const [open, setOpen] = useState(isOpen);
   const [isEditing, setIsEditing] = useState(false);
+  const [isBidding, setIsBidding] = useState(false);
   const [inputName, setInputName] = useState(currentCollection.name);
   const [inputDescription, setInputDescription] = useState(
     currentCollection.description,
@@ -128,42 +131,55 @@ const CollapsableCollection = (props: Props) => {
             {currentCollection.price}
           </h3>
         )}
-        <div
-          style={{
-            justifySelf: "end",
-          }}
-        >
-          {isEditing ? (
-            <button
-              className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-              onClick={handleUpdateCollection}
-            >
-              UPDATE
-            </button>
-          ) : (
-            <button
-              className="m-1 rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit
-            </button>
-          )}
-          {isEditing ? (
-            <button
-              className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-              onClick={handleCancelEdit}
-            >
-              Cancel
-            </button>
-          ) : (
-            <button
-              className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-              onClick={() => void 0}
-            >
-              Delete
-            </button>
-          )}
-        </div>
+
+        {/* Action buttons */}
+
+        {isOwner ? (
+          <div
+            style={{
+              justifySelf: "end",
+            }}
+          >
+            {isEditing ? (
+              <button
+                className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                onClick={handleUpdateCollection}
+              >
+                UPDATE
+              </button>
+            ) : (
+              <button
+                className="m-1 rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </button>
+            )}
+            {isEditing ? (
+              <button
+                className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                onClick={handleCancelEdit}
+              >
+                Cancel
+              </button>
+            ) : (
+              <button
+                className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                onClick={() => void 0}
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              justifySelf: "end",
+            }}
+          >
+            <BidDialog />
+          </div>
+        )}
         <Collapsible.Trigger
           asChild
           style={{
