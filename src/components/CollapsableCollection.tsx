@@ -1,7 +1,6 @@
 import React from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { RowSpacingIcon, Cross2Icon } from "@radix-ui/react-icons";
-import "./styles.css";
 import { Bids, Collections } from "@prisma/client";
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
@@ -22,6 +21,7 @@ const CollapsableCollection = (props: Props) => {
       onOpenChange={setOpen}
     >
       <div
+        className="my-4 grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
         style={{
           display: "flex",
           alignItems: "center",
@@ -39,10 +39,6 @@ const CollapsableCollection = (props: Props) => {
             {open ? <Cross2Icon /> : <RowSpacingIcon />}
           </button>
         </Collapsible.Trigger>
-      </div>
-
-      <div className="Repository">
-        <span className="Text">@radix-ui/primitives</span>
       </div>
 
       <Collapsible.Content>
