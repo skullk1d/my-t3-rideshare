@@ -12,14 +12,13 @@ export const collectionSchema = z.object({
   user_id: z.number(),
   Bids: z.array(bidUpdateSchema),
 });
-export const collectionUpdateSchema = collectionSchema.merge(
-  z.object({
-    id: z.number(),
-    price: z.number().optional(),
-    user_id: z.number().optional(),
-    Bids: z.array(bidUpdateSchema).optional(),
-  }),
-);
+export const collectionUpdateSchema = collectionSchema
+  .omit({ user_id: true, Bids: true })
+  .merge(
+    z.object({
+      id: z.number(),
+    }),
+  );
 
 export default createTRPCRouter({
   get: publicProcedure.input(idListSchema).query(async ({ input, ctx }) => {
@@ -37,6 +36,7 @@ export default createTRPCRouter({
         });
       } else {
         res = ctx.db.collections.findMany({
+          orderBy: { id: "asc" },
           where: {
             id: { in: input },
           },
@@ -48,6 +48,7 @@ export default createTRPCRouter({
     } else {
       // All
       res = ctx.db.collections.findMany({
+        orderBy: { id: "asc" },
         include: {
           Bids: true,
         },
@@ -90,35 +91,11 @@ export default createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Find original to fill partial input with complete record
-      const existingCollection = await ctx.db.collections.findFirst({
-        where: {
-          id: input.id,
-        },
-        include: {
-          Bids: true,
-        },
-      });
-      const updatedCollection = {
-        ...existingCollection,
-        ...collectionSchema.parse(input),
-      };
-
       return ctx.db.collections.update({
         where: {
           id: input.id,
         },
-        data: {
-          ...updatedCollection,
-          Bids: {
-            updateMany: {
-              data: z.array(bidUpdateSchema).parse(updatedCollection.Bids),
-              where: {
-                id: { in: updatedCollection.Bids.map(({ id }) => id) },
-              },
-            },
-          },
-        },
+        data: collectionUpdateSchema.parse(input),
       });
     }),
   delete: publicProcedure

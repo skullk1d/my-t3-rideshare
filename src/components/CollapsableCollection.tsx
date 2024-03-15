@@ -13,42 +13,55 @@ type Props = {
 const CollapsableCollection = (props: Props) => {
   const { collection, isOpen } = props;
 
+  const [currentCollection, setCurrentCollection] = useState(collection);
   const [open, setOpen] = useState(isOpen);
-  const [isEditing, setIsEditing] = useState(true);
-  const [inputName, setInputName] = useState(collection.name);
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputName, setInputName] = useState(currentCollection.name);
   const [inputDescription, setInputDescription] = useState(
-    collection.description,
+    currentCollection.description,
   );
   const [inputQuantity, setInputQuantity] = useState(
-    collection.quantity_stocks,
+    currentCollection.quantity_stocks,
   );
+  const [inputPrice, setInputPrice] = useState(currentCollection.price);
 
-  const fetchCollections = api.collections.get.useQuery([collection.id]);
+  const fetchCollections = api.collections.get.useQuery([currentCollection.id]);
 
   const updateCollectionMutation = api.collections.update.useMutation();
-
-  const handleUpdateCollection = async () => {
-    try {
-      await updateCollectionMutation.mutateAsync({
-        id: collection.id,
-        name: inputName,
-        description: inputDescription,
-        quantity_stocks: inputQuantity,
-      });
-      fetchCollections.refetch();
-
-      handleCancelEdit();
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
 
-    setInputName(collection.name);
-    setInputDescription(collection.description);
-    setInputQuantity(collection.quantity_stocks);
+    setInputName(currentCollection.name);
+    setInputDescription(currentCollection.description);
+    setInputQuantity(currentCollection.quantity_stocks);
+    setInputPrice(currentCollection.price);
+  };
+
+  const handleConfirmEdit = (resultCollection: Collections) => {
+    setCurrentCollection({
+      ...collection,
+      ...resultCollection,
+    });
+    handleCancelEdit();
+  };
+
+  const handleUpdateCollection = async () => {
+    try {
+      updateCollectionMutation
+        .mutateAsync({
+          id: currentCollection.id,
+          name: inputName,
+          description: inputDescription,
+          quantity_stocks: inputQuantity,
+          price: inputPrice,
+        })
+        .then(handleConfirmEdit);
+
+      fetchCollections.refetch();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -58,7 +71,7 @@ const CollapsableCollection = (props: Props) => {
       onOpenChange={setOpen}
     >
       <div
-        className="my-4 grid grid-cols-5 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+        className="my-4 grid grid-cols-6 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
         style={{
           display: "grid",
           justifyContent: "space-between",
@@ -76,7 +89,7 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
-            {collection.name}
+            {currentCollection.name}
           </h3>
         )}
         {isEditing ? (
@@ -88,7 +101,7 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
-            {collection.description}
+            {currentCollection.description}
           </h3>
         )}
         {isEditing ? (
@@ -100,7 +113,19 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
-            {collection.quantity_stocks}
+            {currentCollection.quantity_stocks}
+          </h3>
+        )}
+        {isEditing ? (
+          <input
+            className="mr-2 border border-gray-300 p-2"
+            placeholder="Price"
+            value={inputPrice || ""}
+            onChange={(e) => setInputPrice(Number(e.target.value))}
+          />
+        ) : (
+          <h3 className="Text" style={{ color: "black" }}>
+            {currentCollection.price}
           </h3>
         )}
         <div
@@ -152,7 +177,7 @@ const CollapsableCollection = (props: Props) => {
       </div>
 
       <Collapsible.Content>
-        {collection.Bids.map((bid) => (
+        {currentCollection.Bids.map((bid) => (
           <div
             key={bid.id}
             className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
