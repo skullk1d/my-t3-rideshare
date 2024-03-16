@@ -28,13 +28,12 @@ const CollapsableCollection = (props: Props) => {
     currentCollection.quantity_stocks,
   );
   const [inputPrice, setInputPrice] = useState(currentCollection.price);
-  const [isOwner, setIsOwner] = useState(
-    activeUser.id === currentCollection.user_id,
-  );
 
   const fetchCollections = api.collections.get.useQuery([currentCollection.id]);
 
   const updateCollectionMutation = api.collections.update.useMutation();
+
+  const isOwner = activeUser.id === currentCollection.user_id;
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -78,7 +77,7 @@ const CollapsableCollection = (props: Props) => {
       onOpenChange={setOpen}
     >
       <div
-        className="my-4 grid grid-cols-6 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+        className="my-4 grid grid-cols-7 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
         style={{
           display: "grid",
           justifyContent: "space-between",
@@ -87,6 +86,10 @@ const CollapsableCollection = (props: Props) => {
           alignItems: "cetner",
         }}
       >
+        <h3 className="Text" style={{ color: "black" }}>
+          <label>Owner: </label>
+          {currentCollection.user_id}
+        </h3>
         {isEditing ? (
           <input
             className="mr-2 border border-gray-300 p-2"
@@ -96,6 +99,7 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
+            <label>Name: </label>
             {currentCollection.name}
           </h3>
         )}
@@ -108,6 +112,7 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
+            <label>Description: </label>
             {currentCollection.description}
           </h3>
         )}
@@ -120,6 +125,7 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
+            <label>Quantity: </label>
             {currentCollection.quantity_stocks}
           </h3>
         )}
@@ -132,6 +138,7 @@ const CollapsableCollection = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: "black" }}>
+            <label>Price: </label>
             {currentCollection.price}
           </h3>
         )}

@@ -3,6 +3,7 @@ import { useContext, useRef, useState } from "react";
 import CollapsableCollection, {
   Props as CollapsableCollectionProps,
 } from "~/components/CollapsableCollection";
+import ToggleUser from "~/components/ToggleUser";
 import { ActiveUserContext } from "~/context/ActiveUser";
 
 import { api } from "~/utils/api";
@@ -27,35 +28,11 @@ export default function Home() {
 
   return (
     <div className="mx-auto p-8">
-      <div className="mb-8">
-        <h2 className="mb-4 text-2xl font-bold">Users</h2>
-      </div>
-      <button
-        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        onClick={() => fetchUsers.refetch()}
-      >
-        Get All Users
-      </button>
+      <h4 className="mb-1 text-2xl font-bold">Login As User:</h4>
 
-      <div className="mb-8">
-        <h2 className="mb-4 text-2xl font-bold">Collections</h2>
-      </div>
-      <button
-        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        onClick={() => fetchCollections.refetch()}
-      >
-        Get All Collections
-      </button>
+      <ToggleUser />
 
-      <div className="mb-8">
-        <h2 className="mb-4 text-2xl font-bold">Bids</h2>
-      </div>
-      <button
-        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        onClick={() => fetchBids.refetch()}
-      >
-        Get All Bids
-      </button>
+      <h4 className="mb-1 mt-4 text-2xl font-bold">Collections:</h4>
 
       <div className="mb-8">
         {fetchCollectionsData?.length &&
