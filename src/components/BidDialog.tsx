@@ -1,21 +1,42 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import styles from "./BidDialog.module.css";
 import { api } from "~/utils/api";
-import { Collections } from "@prisma/client";
+import { Bids, Collections } from "@prisma/client";
 import { ActiveUserContext } from "~/context/ActiveUser";
 
 type Props = {
   currentCollection: Collections;
+  handleCreateBid: (bid: Bids) => void;
 };
 
 const DialogDemo = (props: Props) => {
-  const { currentCollection } = props;
+  const { currentCollection, handleCreateBid } = props;
 
   const { activeUser } = useContext(ActiveUserContext);
 
+  const [price, setPrice] = useState(0.0);
+
   const createBidMutation = api.bids.create.useMutation();
+
+  const handleChangePrice = (v: string) => setPrice(parseFloat(v));
+
+  const handleSubmitBid = async () => {
+    try {
+      const res = await createBidMutation.mutateAsync({
+        user_id: activeUser.id,
+        collection_id: currentCollection.id,
+        price,
+        status: "Pending",
+      });
+      setPrice(0.0);
+
+      handleCreateBid(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Dialog.Root>
@@ -28,7 +49,7 @@ const DialogDemo = (props: Props) => {
         <Dialog.Overlay className={styles.DialogOverlay} />
         <Dialog.Content className={styles.DialogContent}>
           <Dialog.Title className={styles.DialogTitle}>
-            {activeUser.name}
+            {`${activeUser.name} bid for collection ${currentCollection.name}`}
           </Dialog.Title>
           <fieldset className={styles.Fieldset}>
             <label className={styles.Label} htmlFor="name">
@@ -42,6 +63,7 @@ const DialogDemo = (props: Props) => {
               min={0}
               max={999}
               step={0.01}
+              onChange={(e) => handleChangePrice(e.target.value)}
             />
           </fieldset>
           <div
@@ -52,7 +74,10 @@ const DialogDemo = (props: Props) => {
             }}
           >
             <Dialog.Close asChild>
-              <button className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+              <button
+                className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                onClick={handleSubmitBid}
+              >
                 Submit
               </button>
             </Dialog.Close>

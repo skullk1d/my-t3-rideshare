@@ -72,6 +72,7 @@ export default createTRPCRouter({
       select: {
         Bids: true,
       },
+      orderBy: { id: "desc" },
     });
   }),
   create: publicProcedure

@@ -30,6 +30,9 @@ const CollapsableCollection = (props: Props) => {
   const [inputPrice, setInputPrice] = useState(currentCollection.price);
 
   const fetchCollections = api.collections.get.useQuery([currentCollection.id]);
+  const fetchCollectionBids = api.collections.getBids.useQuery(
+    currentCollection.id,
+  );
 
   const updateCollectionMutation = api.collections.update.useMutation();
 
@@ -68,6 +71,10 @@ const CollapsableCollection = (props: Props) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleCreateBid = () => {
+    fetchCollectionBids.refetch();
   };
 
   return (
@@ -189,7 +196,10 @@ const CollapsableCollection = (props: Props) => {
               justifySelf: "end",
             }}
           >
-            <BidDialog currentCollection={currentCollection} />
+            <BidDialog
+              currentCollection={currentCollection}
+              handleCreateBid={handleCreateBid}
+            />
           </div>
         )}
         <Collapsible.Trigger
@@ -206,33 +216,34 @@ const CollapsableCollection = (props: Props) => {
 
       <Collapsible.Content>
         {/* Sneaky sneaky filtering & sorting */}
-        {currentCollection.Bids.sort((a, b) => b.price - a.price)
-          .filter((bid) => bid.user_id !== currentCollection.user_id)
-          .map((bid) => (
-            <div
-              key={bid.id}
-              className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
-            >
-              <div>
-                <span className="Text">
-                  <label>Buyer: </label>
-                  {bid.user_id}
-                </span>
+        {fetchCollectionBids.data?.Bids.length &&
+          fetchCollectionBids.data.Bids.sort((a, b) => b.price - a.price)
+            .filter((bid) => bid.user_id !== currentCollection.user_id)
+            .map((bid) => (
+              <div
+                key={bid.id}
+                className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+              >
+                <div>
+                  <span className="Text">
+                    <label>Buyer: </label>
+                    {bid.user_id}
+                  </span>
+                </div>
+                <div>
+                  <span className="Text">
+                    <label>Price: </label>
+                    {bid.price}
+                  </span>
+                </div>
+                <div>
+                  <span className="Text">
+                    <label>Status: </label>
+                    {bid.status}
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="Text">
-                  <label>Price: </label>
-                  {bid.price}
-                </span>
-              </div>
-              <div>
-                <span className="Text">
-                  <label>Status: </label>
-                  {bid.status}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))}
       </Collapsible.Content>
     </Collapsible.Root>
   );
