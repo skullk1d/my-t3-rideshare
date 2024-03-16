@@ -41,12 +41,12 @@ export default createTRPCRouter({
       res = ctx.db.bids.findMany();
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
     return res;
   }),
   create: publicProcedure.input(bidSchema).mutation(async ({ input, ctx }) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
     return ctx.db.bids.create({
       data: bidSchema.parse(input),
@@ -55,7 +55,7 @@ export default createTRPCRouter({
   update: publicProcedure
     .input(bidUpdateSchema)
     .mutation(async ({ input, ctx }) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
       return ctx.db.bids.update({
         where: {
@@ -89,7 +89,7 @@ export default createTRPCRouter({
         res = ctx.db.bids.deleteMany();
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
       return res;
     }),

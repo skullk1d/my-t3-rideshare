@@ -57,13 +57,13 @@ export default createTRPCRouter({
       });
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
     return res;
   }),
   getBids: publicProcedure.input(z.number()).query(async ({ input, ctx }) => {
     // Get all bids of a specified collection
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
     return ctx.db.collections.findFirst({
       where: {
@@ -77,7 +77,7 @@ export default createTRPCRouter({
   create: publicProcedure
     .input(collectionSchema)
     .mutation(async ({ input, ctx }) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
       return ctx.db.collections.create({
         data: {
@@ -91,7 +91,7 @@ export default createTRPCRouter({
   update: publicProcedure
     .input(collectionUpdateSchema)
     .mutation(async ({ input, ctx }) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
       return ctx.db.collections.update({
         where: {
@@ -125,7 +125,7 @@ export default createTRPCRouter({
         res = ctx.db.collections.deleteMany();
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
       return res;
     }),
