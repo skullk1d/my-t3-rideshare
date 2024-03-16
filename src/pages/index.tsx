@@ -1,6 +1,4 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useCallback, useContext, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import CollapsableCollection from "~/components/CollapsableCollection";
 import { ActiveUserContext } from "~/context/ActiveUser";
 

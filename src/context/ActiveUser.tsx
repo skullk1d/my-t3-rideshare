@@ -1,12 +1,5 @@
 import { Users } from "@prisma/client";
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useState,
-} from "react";
-import users from "~/server/api/routers/users";
+import { Dispatch, SetStateAction, createContext, useState } from "react";
 import { api } from "~/utils/api";
 
 const defaultUser: Users = {

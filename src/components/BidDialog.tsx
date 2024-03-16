@@ -3,7 +3,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import styles from "./BidDialog.module.css";
 import { api } from "~/utils/api";
-import { Collections, Users } from "@prisma/client";
+import { Collections } from "@prisma/client";
 import { ActiveUserContext } from "~/context/ActiveUser";
 
 type Props = {
