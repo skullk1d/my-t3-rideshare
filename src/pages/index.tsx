@@ -1,5 +1,8 @@
+import { Collections } from "@prisma/client";
 import { useContext, useRef, useState } from "react";
-import CollapsableCollection from "~/components/CollapsableCollection";
+import CollapsableCollection, {
+  Props as CollapsableCollectionProps,
+} from "~/components/CollapsableCollection";
 import { ActiveUserContext } from "~/context/ActiveUser";
 
 import { api } from "~/utils/api";
@@ -16,6 +19,11 @@ export default function Home() {
   const expandedCollectionIds = useRef<Set<number>>(new Set());
 
   const { activeUser, setActiveUser } = useContext(ActiveUserContext);
+
+  // NOTE: Collections & Bids intersection assertion is congruent with Collections query payload
+  const fetchCollectionsData = fetchCollections.data as Array<
+    CollapsableCollectionProps["collection"]
+  >;
 
   return (
     <div className="mx-auto p-8">
@@ -50,8 +58,8 @@ export default function Home() {
       </button>
 
       <div className="mb-8">
-        {fetchCollections.data?.length &&
-          fetchCollections.data.map((collection) => (
+        {fetchCollectionsData?.length &&
+          fetchCollectionsData.map((collection) => (
             <CollapsableCollection
               key={collection.id}
               collection={collection}

@@ -7,7 +7,7 @@ import BidDialog from "./BidDialog";
 import { ActiveUserContext } from "~/context/ActiveUser";
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
-type Props = {
+export type Props = {
   collection: Collections & { Bids: Array<Bids> };
   isOpen: boolean;
 };
