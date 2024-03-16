@@ -15,7 +15,7 @@ PATH_SCRIPTS=dataset
 docker exec -it $DB_CONTAINER_NAME mkdir -p tmp/$PATH_SCRIPTS
 
 # for d in ./dataset/*.sql; do
-for d in users collections bids
+for d in users collections bids sequence
 do
   # echo $PATH_SCRIPTS/$d
   docker cp $PATH_SCRIPTS/$d.sql $DB_CONTAINER_NAME:/tmp/$PATH_SCRIPTS
