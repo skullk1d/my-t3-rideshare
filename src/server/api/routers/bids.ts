@@ -24,10 +24,13 @@ export default createTRPCRouter({
       // One or Many
       if (input.length === 1) {
         res = ctx.db.bids.findFirst({
-          orderBy: { id: "asc" },
+          where: {
+            id: input[0],
+          },
         });
       } else {
         res = ctx.db.bids.findMany({
+          orderBy: { id: "asc" },
           where: {
             id: { in: input },
           },

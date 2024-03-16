@@ -29,7 +29,9 @@ export default createTRPCRouter({
       // One or Many
       if (input.length === 1) {
         res = ctx.db.collections.findFirst({
-          orderBy: { id: "asc" },
+          where: {
+            id: input[0],
+          },
           include: {
             Bids: true,
           },

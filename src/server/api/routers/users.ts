@@ -13,13 +13,16 @@ export default createTRPCRouter({
       // One or Many
       if (input.length === 1) {
         res = ctx.db.users.findFirst({
-          orderBy: { id: "asc" },
+          where: {
+            id: input[0],
+          },
         });
       } else {
         res = ctx.db.users.findMany({
           where: {
             id: { in: input },
           },
+          orderBy: { id: "asc" },
         });
       }
     } else {
