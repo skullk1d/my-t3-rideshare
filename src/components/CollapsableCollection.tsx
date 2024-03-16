@@ -87,7 +87,7 @@ const CollapsableCollection = (props: Props) => {
         }}
       >
         <h3 className="Text" style={{ color: "black" }}>
-          <label>Owner: </label>
+          <label>Seller: </label>
           {currentCollection.user_id}
         </h3>
         {isEditing ? (
@@ -149,6 +149,7 @@ const CollapsableCollection = (props: Props) => {
           <div
             style={{
               justifySelf: "end",
+              width: "200px",
             }}
           >
             {isEditing ? (
@@ -204,19 +205,34 @@ const CollapsableCollection = (props: Props) => {
       </div>
 
       <Collapsible.Content>
-        {currentCollection.Bids.map((bid) => (
-          <div
-            key={bid.id}
-            className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
-          >
-            <div className="Repository">
-              <span className="Text">{bid.price}</span>
+        {/* Sneaky sneaky filtering & sorting */}
+        {currentCollection.Bids.sort((a, b) => b.price - a.price)
+          .filter((bid) => bid.user_id !== currentCollection.user_id)
+          .map((bid) => (
+            <div
+              key={bid.id}
+              className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+            >
+              <div>
+                <span className="Text">
+                  <label>Buyer: </label>
+                  {bid.user_id}
+                </span>
+              </div>
+              <div>
+                <span className="Text">
+                  <label>Price: </label>
+                  {bid.price}
+                </span>
+              </div>
+              <div>
+                <span className="Text">
+                  <label>Status: </label>
+                  {bid.status}
+                </span>
+              </div>
             </div>
-            <div className="Repository">
-              <span className="Text">{bid.status}</span>
-            </div>
-          </div>
-        ))}
+          ))}
       </Collapsible.Content>
     </Collapsible.Root>
   );

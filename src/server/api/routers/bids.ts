@@ -30,7 +30,7 @@ export default createTRPCRouter({
         });
       } else {
         res = ctx.db.bids.findMany({
-          orderBy: { id: "asc" },
+          orderBy: { price: "desc" },
           where: {
             id: { in: input },
           },
@@ -38,7 +38,9 @@ export default createTRPCRouter({
       }
     } else {
       // All
-      res = ctx.db.bids.findMany();
+      res = ctx.db.bids.findMany({
+        orderBy: { price: "desc" },
+      });
     }
 
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */

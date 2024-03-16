@@ -40,7 +40,7 @@ export default function Home() {
             <CollapsableCollection
               key={collection.id}
               collection={collection}
-              isOpen={true}
+              isOpen={false}
             />
           ))}
       </div>
