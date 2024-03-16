@@ -26,6 +26,12 @@ export default function Home() {
     CollapsableCollectionProps["collection"]
   >;
 
+  const handleDeleteCollection = (res?: Collections) => {
+    if (res) {
+      fetchCollections.refetch();
+    }
+  };
+
   return (
     <div className="mx-auto p-8">
       <h4 className="mb-1 text-2xl font-bold">Login As User:</h4>
@@ -41,6 +47,7 @@ export default function Home() {
               key={collection.id}
               collection={collection}
               isOpen={false}
+              handleDeleteCollection={handleDeleteCollection}
             />
           ))}
       </div>

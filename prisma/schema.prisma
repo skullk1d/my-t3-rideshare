@@ -39,7 +39,7 @@ model Collections {
     description     String
     quantity_stocks Int
     price           Float
-    user            Users  @relation(fields: [user_id], references: [id])
+    user            Users  @relation(fields: [user_id], references: [id], onDelete: Cascade)
     user_id         Int
     Bids            Bids[]
 }
@@ -48,7 +48,7 @@ model Bids {
     id            Int         @id @default(autoincrement())
     price         Float
     status        Status
-    collection    Collections @relation(fields: [collection_id], references: [id])
+    collection    Collections @relation(fields: [collection_id], references: [id], onDelete: Cascade)
     collection_id Int
     user          Users       @relation(fields: [user_id], references: [id])
     user_id       Int

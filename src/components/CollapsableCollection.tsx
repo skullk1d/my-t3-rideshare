@@ -10,10 +10,11 @@ import { ActiveUserContext } from "~/context/ActiveUser";
 export type Props = {
   collection: Collections & { Bids: Array<Bids> };
   isOpen: boolean;
+  handleDeleteCollection: (collection?: Collections) => void;
 };
 
 const CollapsableCollection = (props: Props) => {
-  const { collection, isOpen } = props;
+  const { collection, isOpen, handleDeleteCollection } = props;
 
   const { activeUser } = useContext(ActiveUserContext);
 
@@ -35,6 +36,7 @@ const CollapsableCollection = (props: Props) => {
   );
 
   const updateCollectionMutation = api.collections.update.useMutation();
+  const deleteCollectionsMutation = api.collections.delete.useMutation();
 
   const isOwner = activeUser.id === currentCollection.user_id;
 
@@ -68,6 +70,20 @@ const CollapsableCollection = (props: Props) => {
         .then(handleConfirmEdit);
 
       fetchCollections.refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickDelete = async () => {
+    try {
+      const res = (await deleteCollectionsMutation.mutateAsync([
+        currentCollection.id,
+      ])) as Collections;
+
+      await fetchCollections.refetch();
+
+      handleDeleteCollection(res);
     } catch (error) {
       console.log(error);
     }
@@ -184,7 +200,7 @@ const CollapsableCollection = (props: Props) => {
             ) : (
               <button
                 className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                onClick={() => void 0}
+                onClick={handleClickDelete}
               >
                 Delete
               </button>
