@@ -1,26 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import styles from "./BidDialog.module.css";
 import { api } from "~/utils/api";
+import { Collections, Users } from "@prisma/client";
+import { ActiveUserContext } from "~/context/ActiveUser";
 
-const DialogDemo = () => {
+type Props = {
+  currentCollection: Collections;
+};
+
+const DialogDemo = (props: Props) => {
+  const { currentCollection } = props;
+
+  const { activeUser } = useContext(ActiveUserContext);
+
   const createBidMutation = api.bids.create.useMutation();
-
-  //define handlers
-  const handleCreateUser = async () => {
-    try {
-      await createBidMutation.mutateAsync({
-        name: name,
-        email: email,
-      });
-      setName("");
-      setEmail("");
-      fetchAllUsers.refetch();
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <Dialog.Root>
@@ -32,7 +27,9 @@ const DialogDemo = () => {
       <Dialog.Portal>
         <Dialog.Overlay className={styles.DialogOverlay} />
         <Dialog.Content className={styles.DialogContent}>
-          <Dialog.Title className={styles.DialogTitle}>Bid</Dialog.Title>
+          <Dialog.Title className={styles.DialogTitle}>
+            {activeUser.name}
+          </Dialog.Title>
           <fieldset className={styles.Fieldset}>
             <label className={styles.Label} htmlFor="name">
               Price

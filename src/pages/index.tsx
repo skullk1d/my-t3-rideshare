@@ -1,7 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
 import CollapsableCollection from "~/components/CollapsableCollection";
+import { ActiveUserContext } from "~/context/ActiveUser";
 
 import { api } from "~/utils/api";
 
@@ -15,6 +16,8 @@ export default function Home() {
   const fetchBids = api.bids.get.useQuery(bidIds);
 
   const expandedCollectionIds = useRef<Set<number>>(new Set());
+
+  const { activeUser, setActiveUser } = useContext(ActiveUserContext);
 
   return (
     <div className="mx-auto p-8">

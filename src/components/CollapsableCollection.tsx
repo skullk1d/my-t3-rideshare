@@ -1,24 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { RowSpacingIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { Bids, Collections } from "@prisma/client";
 import { api } from "~/utils/api";
 import BidDialog from "./BidDialog";
+import { ActiveUserContext } from "~/context/ActiveUser";
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
 type Props = {
   collection: Collections & { Bids: Array<Bids> };
   isOpen: boolean;
-  isOwner: boolean;
 };
 
 const CollapsableCollection = (props: Props) => {
-  const { collection, isOpen, isOwner } = props;
+  const { collection, isOpen } = props;
+
+  const { activeUser } = useContext(ActiveUserContext);
 
   const [currentCollection, setCurrentCollection] = useState(collection);
   const [open, setOpen] = useState(isOpen);
   const [isEditing, setIsEditing] = useState(false);
-  const [isBidding, setIsBidding] = useState(false);
   const [inputName, setInputName] = useState(currentCollection.name);
   const [inputDescription, setInputDescription] = useState(
     currentCollection.description,
@@ -27,6 +28,9 @@ const CollapsableCollection = (props: Props) => {
     currentCollection.quantity_stocks,
   );
   const [inputPrice, setInputPrice] = useState(currentCollection.price);
+  const [isOwner, setIsOwner] = useState(
+    activeUser.id === currentCollection.user_id,
+  );
 
   const fetchCollections = api.collections.get.useQuery([currentCollection.id]);
 
@@ -177,7 +181,7 @@ const CollapsableCollection = (props: Props) => {
               justifySelf: "end",
             }}
           >
-            <BidDialog />
+            <BidDialog currentCollection={currentCollection} />
           </div>
         )}
         <Collapsible.Trigger
