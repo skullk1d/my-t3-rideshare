@@ -37,8 +37,9 @@ const CollapsableCollection = (props: Props) => {
 
   const updateCollectionMutation = api.collections.update.useMutation();
   const deleteCollectionsMutation = api.collections.delete.useMutation();
+  const deleteBidsMutation = api.bids.delete.useMutation();
 
-  const isOwner = activeUser.id === currentCollection.user_id;
+  const isCollectionOwner = activeUser.id === currentCollection.user_id;
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -75,7 +76,7 @@ const CollapsableCollection = (props: Props) => {
     }
   };
 
-  const handleClickDelete = async () => {
+  const handleClickDeleteCollection = async () => {
     try {
       const res = (await deleteCollectionsMutation.mutateAsync([
         currentCollection.id,
@@ -84,6 +85,16 @@ const CollapsableCollection = (props: Props) => {
       await fetchCollections.refetch();
 
       handleDeleteCollection(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickDeleteBid = async (bidId: number) => {
+    try {
+      const res = (await deleteBidsMutation.mutateAsync([bidId])) as Bids;
+
+      await fetchCollectionBids.refetch();
     } catch (error) {
       console.log(error);
     }
@@ -168,7 +179,7 @@ const CollapsableCollection = (props: Props) => {
 
         {/* Action buttons */}
 
-        {isOwner ? (
+        {isCollectionOwner ? (
           <div
             style={{
               justifySelf: "end",
@@ -200,7 +211,7 @@ const CollapsableCollection = (props: Props) => {
             ) : (
               <button
                 className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                onClick={handleClickDelete}
+                onClick={handleClickDeleteCollection}
               >
                 Delete
               </button>
@@ -238,7 +249,7 @@ const CollapsableCollection = (props: Props) => {
             .map((bid) => (
               <div
                 key={bid.id}
-                className="my-1 ml-[50px] grid grid-cols-3 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+                className="my-1 ml-[50px] grid grid-cols-4 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
               >
                 <div>
                   <span className="Text">
@@ -258,6 +269,20 @@ const CollapsableCollection = (props: Props) => {
                     {bid.status}
                   </span>
                 </div>
+                {activeUser.id === bid.user_id ? (
+                  <div
+                    style={{
+                      justifySelf: "end",
+                    }}
+                  >
+                    <button
+                      className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                      onClick={() => handleClickDeleteBid(bid.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ) : null}
               </div>
             ))}
       </Collapsible.Content>
