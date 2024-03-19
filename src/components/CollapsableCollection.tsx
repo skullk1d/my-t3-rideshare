@@ -5,6 +5,7 @@ import { Bids, Collections } from "@prisma/client";
 import { api } from "~/utils/api";
 import BidDialog from "./BidDialog";
 import { ActiveUserContext } from "~/context/ActiveUser";
+import styles from "./CollapsableCollection.module.css";
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
 export type Props = {
@@ -38,6 +39,8 @@ const CollapsableCollection = (props: Props) => {
   const updateCollectionMutation = api.collections.update.useMutation();
   const deleteCollectionsMutation = api.collections.delete.useMutation();
   const deleteBidsMutation = api.bids.delete.useMutation();
+  const acceptBidsMutation = api.bids.accept.useMutation();
+  const rejectBidsMutation = api.bids.reject.useMutation();
 
   const isCollectionOwner = activeUser.id === currentCollection.user_id;
 
@@ -92,7 +95,27 @@ const CollapsableCollection = (props: Props) => {
 
   const handleClickDeleteBid = async (bidId: number) => {
     try {
-      const res = (await deleteBidsMutation.mutateAsync([bidId])) as Bids;
+      await deleteBidsMutation.mutateAsync([bidId]);
+
+      await fetchCollectionBids.refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickAcceptBid = async (bidId: number) => {
+    try {
+      await acceptBidsMutation.mutateAsync(bidId);
+
+      await fetchCollectionBids.refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClickRejectBid = async (bidId: number) => {
+    try {
+      await rejectBidsMutation.mutateAsync(bidId);
 
       await fetchCollectionBids.refetch();
     } catch (error) {
@@ -180,12 +203,7 @@ const CollapsableCollection = (props: Props) => {
         {/* Action buttons */}
 
         {isCollectionOwner ? (
-          <div
-            style={{
-              justifySelf: "end",
-              width: "200px",
-            }}
-          >
+          <div>
             {isEditing ? (
               <button
                 className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
@@ -281,6 +299,29 @@ const CollapsableCollection = (props: Props) => {
                     >
                       Delete
                     </button>
+                  </div>
+                ) : null}
+                {isCollectionOwner && bid.status === "Pending" ? (
+                  <div className={styles.AcceptRejectButtonGroup}>
+                    <div className={styles.AcceptRejectButton}>
+                      <button
+                        className="accept-reject-btn m14 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                        onClick={() => handleClickAcceptBid(bid.id)}
+                      >
+                        Accept
+                      </button>
+                    </div>
+                    <div className={styles.AcceptRejectButton}>
+                      <button
+                        className={
+                          "accept-reject-btn m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 " +
+                          styles.AcceptRejectButton
+                        }
+                        onClick={() => handleClickRejectBid(bid.id)}
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </div>
                 ) : null}
               </div>

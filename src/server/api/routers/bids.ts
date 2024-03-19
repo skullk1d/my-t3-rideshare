@@ -95,4 +95,55 @@ export default createTRPCRouter({
 
       return res;
     }),
+  accept: publicProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+
+    // find parent collection
+    const bid = await ctx.db.bids.findFirst({
+      where: {
+        id: input,
+      },
+    });
+    const collection = await ctx.db.collections.findFirst({
+      where: {
+        id: bid?.collection_id,
+      },
+      select: {
+        Bids: true,
+      },
+    });
+
+    // reject siblings
+    await ctx.db.bids.updateMany({
+      where: {
+        id: { in: (collection?.Bids || []).map((b) => b.id), not: input },
+      },
+      data: {
+        status: "Rejected",
+      },
+    });
+
+    // accept this bid
+    return ctx.db.bids.update({
+      where: {
+        id: input,
+      },
+      data: {
+        status: "Accepted",
+      },
+    });
+  }),
+  reject: publicProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+
+    // reject this bid
+    return ctx.db.bids.update({
+      where: {
+        id: input,
+      },
+      data: {
+        status: "Rejected",
+      },
+    });
+  }),
 });
