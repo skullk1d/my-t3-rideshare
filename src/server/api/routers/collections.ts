@@ -23,7 +23,7 @@ export default createTRPCRouter({
     // Get one or many depending on input
     let res;
 
-    if (input && input.length) {
+    if (input?.length) {
       // One or Many
       if (input.length === 1) {
         res = ctx.db.collections.findFirst({

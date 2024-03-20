@@ -1,4 +1,4 @@
-import { Bids, Collections } from '@prisma/client';
+import { type Bids, type Collections } from '@prisma/client';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import React, { useContext, useState } from 'react';

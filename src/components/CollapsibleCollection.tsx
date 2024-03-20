@@ -1,4 +1,4 @@
-import { Bids, Collections } from '@prisma/client';
+import { type Bids, type Collections } from '@prisma/client';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { Cross2Icon, RowSpacingIcon } from '@radix-ui/react-icons';
 import React, { useContext, useState } from 'react';
@@ -58,7 +58,7 @@ const CollapsibleCollection = (props: Props) => {
 
   const handleUpdateCollection = async () => {
     try {
-      updateCollectionMutation
+      await updateCollectionMutation
         .mutateAsync({
           id: currentCollection.id,
           name: inputName,
@@ -68,7 +68,7 @@ const CollapsibleCollection = (props: Props) => {
         })
         .then(handleConfirmEdit);
 
-      fetchCollections.refetch();
+      await fetchCollections.refetch();
     } catch (error) {
       console.log(error);
     }
@@ -118,8 +118,8 @@ const CollapsibleCollection = (props: Props) => {
     }
   };
 
-  const handleCreateBid = () => {
-    fetchCollectionBids.refetch();
+  const handleCreateBid = async () => {
+    await fetchCollectionBids.refetch();
   };
 
   return (

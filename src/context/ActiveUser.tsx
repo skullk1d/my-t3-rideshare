@@ -1,5 +1,5 @@
-import { Users } from '@prisma/client';
-import { Dispatch, ReactNode, SetStateAction, createContext, useState } from 'react';
+import { type Users } from '@prisma/client';
+import { type Dispatch, type ReactNode, type SetStateAction, createContext, useState } from 'react';
 import { api } from '~/utils/api';
 
 type Props = {
