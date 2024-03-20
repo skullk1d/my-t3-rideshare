@@ -5,7 +5,7 @@ import { Bids, Collections } from "@prisma/client";
 import { api } from "~/utils/api";
 import BidDialog from "./BidDialog";
 import { ActiveUserContext } from "~/context/ActiveUser";
-import styles from "./CollapsableCollection.module.css";
+import styles from "./CollapsibleCollection.module.css";
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
 export type Props = {
@@ -14,7 +14,7 @@ export type Props = {
   handleDeleteCollection: (collection?: Collections) => void;
 };
 
-const CollapsableCollection = (props: Props) => {
+const CollapsibleCollection = (props: Props) => {
   const { collection, isOpen, handleDeleteCollection } = props;
 
   const { activeUser } = useContext(ActiveUserContext);
@@ -331,4 +331,4 @@ const CollapsableCollection = (props: Props) => {
   );
 };
 
-export default CollapsableCollection;
+export default CollapsibleCollection;

@@ -1,8 +1,8 @@
 import { Collections } from "@prisma/client";
 import { useContext, useRef, useState } from "react";
-import CollapsableCollection, {
-  Props as CollapsableCollectionProps,
-} from "~/components/CollapsableCollection";
+import CollapsibleCollection, {
+  Props as CollapsibleCollectionProps,
+} from "~/components/CollapsibleCollection";
 import ToggleUser from "~/components/ToggleUser";
 import { ActiveUserContext } from "~/context/ActiveUser";
 
@@ -23,7 +23,7 @@ export default function Home() {
 
   // NOTE: Collections & Bids intersection assertion is congruent with Collections query payload
   const fetchCollectionsData = fetchCollections.data as Array<
-    CollapsableCollectionProps["collection"]
+    CollapsibleCollectionProps["collection"]
   >;
 
   const handleDeleteCollection = (res?: Collections) => {
@@ -43,7 +43,7 @@ export default function Home() {
       <div className="mb-8">
         {fetchCollectionsData?.length &&
           fetchCollectionsData.map((collection) => (
-            <CollapsableCollection
+            <CollapsibleCollection
               key={collection.id}
               collection={collection}
               isOpen={false}
