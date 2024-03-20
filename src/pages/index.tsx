@@ -1,12 +1,11 @@
-import { Collections } from "@prisma/client";
-import { useContext, useRef, useState } from "react";
+import { Collections } from '@prisma/client';
+import { useContext, useRef, useState } from 'react';
 import CollapsibleCollection, {
   Props as CollapsibleCollectionProps,
-} from "~/components/CollapsibleCollection";
-import ToggleUser from "~/components/ToggleUser";
-import { ActiveUserContext } from "~/context/ActiveUser";
-
-import { api } from "~/utils/api";
+} from '~/components/CollapsibleCollection';
+import ToggleUser from '~/components/ToggleUser';
+import { ActiveUserContext } from '~/context/ActiveUser';
+import { api } from '~/utils/api';
 
 export default function Home() {
   const [userIds, setUserIds] = useState<number[]>([]);
@@ -23,7 +22,7 @@ export default function Home() {
 
   // NOTE: Collections & Bids intersection assertion is congruent with Collections query payload
   const fetchCollectionsData = fetchCollections.data as Array<
-    CollapsibleCollectionProps["collection"]
+    CollapsibleCollectionProps['collection']
   >;
 
   const handleDeleteCollection = (res?: Collections) => {

@@ -1,6 +1,5 @@
-import { z } from "zod";
-
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { z } from 'zod';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const idListSchema = z.optional(z.array(z.number()));
 
@@ -22,7 +21,7 @@ export default createTRPCRouter({
           where: {
             id: { in: input },
           },
-          orderBy: { id: "asc" },
+          orderBy: { id: 'asc' },
         });
       }
     } else {

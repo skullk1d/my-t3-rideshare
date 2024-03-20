@@ -1,6 +1,6 @@
 .ToggleGroup {
   display: flex;
-  background-color: gray;;
+  background-color: gray;
   border-radius: 4px;
   box-shadow: 0 0 2px black;
 }

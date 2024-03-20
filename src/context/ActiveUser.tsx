@@ -1,12 +1,6 @@
-import { Users } from "@prisma/client";
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useState,
-} from "react";
-import { api } from "~/utils/api";
+import { Users } from '@prisma/client';
+import { Dispatch, ReactNode, SetStateAction, createContext, useState } from 'react';
+import { api } from '~/utils/api';
 
 type Props = {
   children?: ReactNode;
@@ -14,8 +8,8 @@ type Props = {
 
 const defaultUser: Users = {
   id: 1,
-  name: "",
-  email: "",
+  name: '',
+  email: '',
 };
 
 export const ActiveUserContext = createContext<{
@@ -30,9 +24,7 @@ const ActiveUserWrapper = ({ children }: Props) => {
   // ASSUMPTION: At least one user exists
   const fetchUsers = api.users.get.useQuery([1]);
 
-  const [activeUser, setActiveUser] = useState(
-    (fetchUsers.data as Users) ?? defaultUser,
-  );
+  const [activeUser, setActiveUser] = useState((fetchUsers.data as Users) ?? defaultUser);
 
   return (
     <ActiveUserContext.Provider value={{ activeUser, setActiveUser }}>

@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { api } from "~/utils/api";
-import { Users } from "@prisma/client";
-import styles from "./ToggleUser.module.css";
-import { ActiveUserContext } from "~/context/ActiveUser";
+import { Users } from '@prisma/client';
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import React, { useContext, useState } from 'react';
+import { ActiveUserContext } from '~/context/ActiveUser';
+import { api } from '~/utils/api';
+
+import styles from './ToggleUser.module.css';
 
 const ToggleGroupDemo = () => {
   const { activeUser, setActiveUser } = useContext(ActiveUserContext);
@@ -25,7 +26,7 @@ const ToggleGroupDemo = () => {
 
   return (
     <ToggleGroup.Root
-      className={styles.ToggleGroup + " my-4"}
+      className={styles.ToggleGroup + ' my-4'}
       type="single"
       defaultValue={String(activeUser.id)}
       aria-label="Text alignment"

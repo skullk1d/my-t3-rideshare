@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { idListSchema } from "./users";
-import { bidSchema, bidUpdateSchema } from "./bids";
+import { bidSchema, bidUpdateSchema } from './bids';
+import { idListSchema } from './users';
 
 export const collectionSchema = z.object({
   name: z.string(),
@@ -12,13 +12,11 @@ export const collectionSchema = z.object({
   user_id: z.number(),
   Bids: z.array(bidUpdateSchema),
 });
-export const collectionUpdateSchema = collectionSchema
-  .omit({ user_id: true, Bids: true })
-  .merge(
-    z.object({
-      id: z.number(),
-    }),
-  );
+export const collectionUpdateSchema = collectionSchema.omit({ user_id: true, Bids: true }).merge(
+  z.object({
+    id: z.number(),
+  }),
+);
 
 export default createTRPCRouter({
   get: publicProcedure.input(idListSchema).query(async ({ input, ctx }) => {
@@ -38,7 +36,7 @@ export default createTRPCRouter({
         });
       } else {
         res = ctx.db.collections.findMany({
-          orderBy: { id: "asc" },
+          orderBy: { id: 'asc' },
           where: {
             id: { in: input },
           },
@@ -50,7 +48,7 @@ export default createTRPCRouter({
     } else {
       // All
       res = ctx.db.collections.findMany({
-        orderBy: { id: "asc" },
+        orderBy: { id: 'asc' },
         include: {
           Bids: true,
         },
@@ -72,62 +70,56 @@ export default createTRPCRouter({
       select: {
         Bids: true,
       },
-      orderBy: { id: "desc" },
+      orderBy: { id: 'desc' },
     });
   }),
-  create: publicProcedure
-    .input(collectionSchema)
-    .mutation(async ({ input, ctx }) => {
-      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+  create: publicProcedure.input(collectionSchema).mutation(async ({ input, ctx }) => {
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-      return ctx.db.collections.create({
-        data: {
-          ...collectionSchema.parse(input),
-          Bids: {
-            create: z.array(bidSchema).parse(input.Bids),
+    return ctx.db.collections.create({
+      data: {
+        ...collectionSchema.parse(input),
+        Bids: {
+          create: z.array(bidSchema).parse(input.Bids),
+        },
+      },
+    });
+  }),
+  update: publicProcedure.input(collectionUpdateSchema).mutation(async ({ input, ctx }) => {
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+
+    return ctx.db.collections.update({
+      where: {
+        id: input.id,
+      },
+      data: collectionUpdateSchema.parse(input),
+    });
+  }),
+  delete: publicProcedure.input(idListSchema).mutation(async ({ input, ctx }) => {
+    let res;
+
+    if (input) {
+      // One or Many
+      if (input.length === 1) {
+        res = ctx.db.collections.delete({
+          where: {
+            id: input[0],
           },
-        },
-      });
-    }),
-  update: publicProcedure
-    .input(collectionUpdateSchema)
-    .mutation(async ({ input, ctx }) => {
-      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
-
-      return ctx.db.collections.update({
-        where: {
-          id: input.id,
-        },
-        data: collectionUpdateSchema.parse(input),
-      });
-    }),
-  delete: publicProcedure
-    .input(idListSchema)
-    .mutation(async ({ input, ctx }) => {
-      let res;
-
-      if (input) {
-        // One or Many
-        if (input.length === 1) {
-          res = ctx.db.collections.delete({
-            where: {
-              id: input[0],
-            },
-          });
-        } else if (input.length) {
-          res = ctx.db.collections.deleteMany({
-            where: {
-              id: { in: input },
-            },
-          });
-        }
-      } else {
-        // All
-        res = ctx.db.collections.deleteMany();
+        });
+      } else if (input.length) {
+        res = ctx.db.collections.deleteMany({
+          where: {
+            id: { in: input },
+          },
+        });
       }
+    } else {
+      // All
+      res = ctx.db.collections.deleteMany();
+    }
 
-      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-      return res;
-    }),
+    return res;
+  }),
 });

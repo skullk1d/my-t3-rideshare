@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { idListSchema } from "./users";
+import { idListSchema } from './users';
 
 export const bidSchema = z.object({
   price: z.number(),
-  status: z.enum(["Pending", "Accepted", "Rejected"]),
+  status: z.enum(['Pending', 'Accepted', 'Rejected']),
   user_id: z.number(),
   collection_id: z.number(),
 });
@@ -30,7 +30,7 @@ export default createTRPCRouter({
         });
       } else {
         res = ctx.db.bids.findMany({
-          orderBy: { price: "desc" },
+          orderBy: { price: 'desc' },
           where: {
             id: { in: input },
           },
@@ -39,7 +39,7 @@ export default createTRPCRouter({
     } else {
       // All
       res = ctx.db.bids.findMany({
-        orderBy: { price: "desc" },
+        orderBy: { price: 'desc' },
       });
     }
 
@@ -54,47 +54,43 @@ export default createTRPCRouter({
       data: bidSchema.parse(input),
     });
   }),
-  update: publicProcedure
-    .input(bidUpdateSchema)
-    .mutation(async ({ input, ctx }) => {
-      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+  update: publicProcedure.input(bidUpdateSchema).mutation(async ({ input, ctx }) => {
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-      return ctx.db.bids.update({
-        where: {
-          id: input.id,
-        },
-        data: bidSchema.parse(input),
-      });
-    }),
-  delete: publicProcedure
-    .input(idListSchema)
-    .mutation(async ({ input, ctx }) => {
-      let res;
+    return ctx.db.bids.update({
+      where: {
+        id: input.id,
+      },
+      data: bidSchema.parse(input),
+    });
+  }),
+  delete: publicProcedure.input(idListSchema).mutation(async ({ input, ctx }) => {
+    let res;
 
-      if (input) {
-        // One or Many
-        if (input.length === 1) {
-          res = ctx.db.bids.delete({
-            where: {
-              id: input[0],
-            },
-          });
-        } else if (input.length) {
-          res = ctx.db.bids.deleteMany({
-            where: {
-              id: { in: input },
-            },
-          });
-        }
-      } else {
-        // All
-        res = ctx.db.bids.deleteMany();
+    if (input) {
+      // One or Many
+      if (input.length === 1) {
+        res = ctx.db.bids.delete({
+          where: {
+            id: input[0],
+          },
+        });
+      } else if (input.length) {
+        res = ctx.db.bids.deleteMany({
+          where: {
+            id: { in: input },
+          },
+        });
       }
+    } else {
+      // All
+      res = ctx.db.bids.deleteMany();
+    }
 
-      /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
+    /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-      return res;
-    }),
+    return res;
+  }),
   accept: publicProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
@@ -119,7 +115,7 @@ export default createTRPCRouter({
         id: { in: (collection?.Bids || []).map((b) => b.id), not: input },
       },
       data: {
-        status: "Rejected",
+        status: 'Rejected',
       },
     });
 
@@ -129,7 +125,7 @@ export default createTRPCRouter({
         id: input,
       },
       data: {
-        status: "Accepted",
+        status: 'Accepted',
       },
     });
   }),
@@ -142,7 +138,7 @@ export default createTRPCRouter({
         id: input,
       },
       data: {
-        status: "Rejected",
+        status: 'Rejected',
       },
     });
   }),

@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import styles from "./BidDialog.module.css";
-import { api } from "~/utils/api";
-import { Bids, Collections } from "@prisma/client";
-import { ActiveUserContext } from "~/context/ActiveUser";
+import { Bids, Collections } from '@prisma/client';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import React, { useContext, useState } from 'react';
+import { ActiveUserContext } from '~/context/ActiveUser';
+import { api } from '~/utils/api';
+
+import styles from './BidDialog.module.css';
 
 type Props = {
   currentCollection: Collections;
@@ -28,7 +29,7 @@ const DialogDemo = (props: Props) => {
         user_id: activeUser.id,
         collection_id: currentCollection.id,
         price,
-        status: "Pending",
+        status: 'Pending',
       });
       setPrice(0.0);
 
@@ -68,9 +69,9 @@ const DialogDemo = (props: Props) => {
           </fieldset>
           <div
             style={{
-              display: "flex",
+              display: 'flex',
               marginTop: 25,
-              justifyContent: "flex-end",
+              justifyContent: 'flex-end',
             }}
           >
             <Dialog.Close asChild>

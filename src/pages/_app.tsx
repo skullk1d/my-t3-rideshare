@@ -1,14 +1,12 @@
-import { type AppType } from "next/app";
-import { Inter } from "next/font/google";
-
-import { api } from "~/utils/api";
-
-import "~/styles/globals.css";
-import ActiveUserWrapper from "~/context/ActiveUser";
+import { type AppType } from 'next/app';
+import { Inter } from 'next/font/google';
+import ActiveUserWrapper from '~/context/ActiveUser';
+import '~/styles/globals.css';
+import { api } from '~/utils/api';
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
+  subsets: ['latin'],
+  variable: '--font-sans',
 });
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
