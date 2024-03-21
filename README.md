@@ -2,8 +2,12 @@
 
 ## Database / Server / Client
 
-Add `.env` to local project root:
-https://www.dropbox.com/scl/fi/63grpwobu3mrnzt2j0q79/env.zip?rlkey=wqyk5s4o5b0gorfmbjyw62yu8&dl=0
+Create `.env` to local project root with this line:
+
+`DATABASE_URL="postgresql://postgres:password@localhost:5432/my-t3-auction"`
+
+When prompted by the `start-database` script to generate a new password, accept if you wish.
+Or, write your own into the URL.
 
 ```
 npm install
