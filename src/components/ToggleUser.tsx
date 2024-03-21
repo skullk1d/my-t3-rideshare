@@ -1,4 +1,4 @@
-import { type Users } from '@prisma/client';
+import { type User } from '@prisma/client';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import React, { useContext, useState } from 'react';
 import { ActiveUserContext } from '~/context/ActiveUser';
@@ -14,13 +14,13 @@ const ToggleUser = () => {
   const fetchUsers = api.users.get.useQuery();
   const fetchUser = api.users.get.useQuery([currentUserId]);
 
-  const fetchUsersData = fetchUsers.data as Array<Users>;
+  const fetchUsersData = fetchUsers.data as Array<User>;
 
   const handleToggleUser = async (v: string) => {
     setCurrentUserId(parseInt(v));
 
     await fetchUser.refetch().then((res) => {
-      setActiveUser(res.data as Users);
+      setActiveUser(res.data as User);
     });
   };
 

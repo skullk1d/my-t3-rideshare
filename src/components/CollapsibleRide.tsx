@@ -1,125 +1,122 @@
-import { type Bids, type Collections } from '@prisma/client';
+import { type Driver, type Ride } from '@prisma/client';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { Cross2Icon, RowSpacingIcon } from '@radix-ui/react-icons';
 import React, { useContext, useState } from 'react';
+import { z } from 'zod';
 import { ActiveUserContext } from '~/context/ActiveUser';
 import { api } from '~/utils/api';
 
-import BidDialog from './BidDialog';
-import styles from './CollapsibleCollection.module.css';
+import styles from './CollapsibleRide.module.css';
+import DriverDialog from './DriverDialog';
 
 // NOTE: Manually intersected type to be like TRPQueryResult from relational query
 export type Props = {
-  collection: Collections & { Bids: Array<Bids> };
+  ride: Ride & { Driver: Array<Driver> };
   isOpen: boolean;
-  handleDeleteCollection: (collection?: Collections) => void;
+  handleDeleteRide: (ride?: Ride) => void;
 };
 
-const CollapsibleCollection = (props: Props) => {
-  const { collection, isOpen, handleDeleteCollection } = props;
+const CollapsibleRide = (props: Props) => {
+  const { ride, isOpen, handleDeleteRide } = props;
 
   const { activeUser } = useContext(ActiveUserContext);
 
-  const [currentCollection, setCurrentCollection] = useState(collection);
+  const [currentRide, setCurrentRide] = useState(ride);
   const [open, setOpen] = useState(isOpen);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputName, setInputName] = useState(currentCollection.name);
-  const [inputDescription, setInputDescription] = useState(currentCollection.description);
-  const [inputQuantity, setInputQuantity] = useState(currentCollection.quantity_stocks);
-  const [inputPrice, setInputPrice] = useState(currentCollection.price);
+  const [inputName, setInputName] = useState(currentRide.app_name);
+  const [inputAddress, setInputAddress] = useState(currentRide.address);
+  const [inputQuantity, setInputQuantity] = useState(currentRide.quantity_passengers);
 
-  const fetchCollections = api.collections.get.useQuery([currentCollection.id]);
-  const fetchCollectionBids = api.collections.getBids.useQuery(currentCollection.id);
+  const fetchRides = api.rides.get.useQuery([currentRide.id]);
+  const fetchRideDriver = api.rides.getDriver.useQuery(currentRide.id);
 
-  const updateCollectionMutation = api.collections.update.useMutation();
-  const deleteCollectionsMutation = api.collections.delete.useMutation();
-  const deleteBidsMutation = api.bids.delete.useMutation();
-  const acceptBidsMutation = api.bids.accept.useMutation();
-  const rejectBidsMutation = api.bids.reject.useMutation();
+  const updateRideMutation = api.rides.update.useMutation();
+  const deleteRidesMutation = api.rides.delete.useMutation();
+  const deleteDriverMutation = api.drivers.delete.useMutation();
+  const acceptDriverMutation = api.drivers.accept.useMutation();
+  const rejectDriverMutation = api.drivers.reject.useMutation();
 
-  const isCollectionOwner = activeUser.id === currentCollection.user_id;
+  const isRideOwner = activeUser.id === currentRide.user_id;
 
   const handleCancelEdit = () => {
     setIsEditing(false);
 
-    setInputName(currentCollection.name);
-    setInputDescription(currentCollection.description);
-    setInputQuantity(currentCollection.quantity_stocks);
-    setInputPrice(currentCollection.price);
+    setInputName(currentRide.app_name);
+    setInputAddress(currentRide.address);
+    setInputQuantity(currentRide.quantity_passengers);
   };
 
-  const handleConfirmEdit = (resultCollection: Collections) => {
-    setCurrentCollection({
-      ...collection,
-      ...resultCollection,
+  const handleConfirmEdit = (resultRide: Ride) => {
+    setCurrentRide({
+      ...ride,
+      ...resultRide,
     });
     handleCancelEdit();
   };
 
-  const handleUpdateCollection = async () => {
+  const handleUpdateRide = async () => {
     try {
-      await updateCollectionMutation
+      await updateRideMutation
         .mutateAsync({
-          id: currentCollection.id,
-          name: inputName,
-          description: inputDescription,
-          quantity_stocks: inputQuantity,
-          price: inputPrice,
+          id: currentRide.id,
+          requested_at: z.date().parse(Date.now()),
+          app_name: inputName,
+          address: inputAddress,
+          quantity_passengers: inputQuantity,
         })
         .then(handleConfirmEdit);
 
-      await fetchCollections.refetch();
+      await fetchRides.refetch();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleClickDeleteCollection = async () => {
+  const handleClickDeleteRide = async () => {
     try {
-      const res = (await deleteCollectionsMutation.mutateAsync([
-        currentCollection.id,
-      ])) as Collections;
+      const res = (await deleteRidesMutation.mutateAsync([currentRide.id])) as Ride;
 
-      await fetchCollections.refetch();
+      await fetchRides.refetch();
 
-      handleDeleteCollection(res);
+      handleDeleteRide(res);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleClickDeleteBid = async (bidId: number) => {
+  const handleClickDeleteDriver = async (driverId: number) => {
     try {
-      await deleteBidsMutation.mutateAsync([bidId]);
+      await deleteDriverMutation.mutateAsync([driverId]);
 
-      await fetchCollectionBids.refetch();
+      await fetchRideDriver.refetch();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleClickAcceptBid = async (bidId: number) => {
+  const handleClickAcceptDriver = async (driverId: number) => {
     try {
-      await acceptBidsMutation.mutateAsync(bidId);
+      await acceptDriverMutation.mutateAsync(driverId);
 
-      await fetchCollectionBids.refetch();
+      await fetchRideDriver.refetch();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleClickRejectBid = async (bidId: number) => {
+  const handleClickRejectDriver = async (driverId: number) => {
     try {
-      await rejectBidsMutation.mutateAsync(bidId);
+      await rejectDriverMutation.mutateAsync(driverId);
 
-      await fetchCollectionBids.refetch();
+      await fetchRideDriver.refetch();
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleCreateBid = async () => {
-    await fetchCollectionBids.refetch();
+  const handleCreateDriver = async () => {
+    await fetchRideDriver.refetch();
   };
 
   return (
@@ -131,74 +128,55 @@ const CollapsibleCollection = (props: Props) => {
           justifyContent: 'space-between',
           justifyItems: 'stretch',
           alignContent: 'center',
-          alignItems: 'cetner',
+          alignItems: 'center',
         }}
       >
         <h3 className="Text" style={{ color: 'black' }}>
-          <label>Seller: </label>
-          {currentCollection.user_id}
+          {`User: (${currentRide.user_id})`}
+        </h3>
+        <h3 className="Text" style={{ color: 'black' }}>
+          <label>Requested on:</label>
+          {currentRide.requested_at.toLocaleString()}
+        </h3>
+        <h3 className="Text" style={{ color: 'black' }}>
+          <label>Vendor:</label>
+          {currentRide.app_name}
         </h3>
         {isEditing ? (
           <input
             className="mr-2 border border-gray-300 p-2"
-            placeholder="Name"
-            value={inputName || ''}
-            onChange={(e) => setInputName(String(e.target.value))}
+            placeholder="Address"
+            value={inputAddress || ''}
+            onChange={(e) => setInputAddress(String(e.target.value))}
           />
         ) : (
           <h3 className="Text" style={{ color: 'black' }}>
-            <label>Name: </label>
-            {currentCollection.name}
+            <label>Address: </label>
+            {currentRide.address}
           </h3>
         )}
         {isEditing ? (
           <input
             className="mr-2 border border-gray-300 p-2"
-            placeholder="Description"
-            value={inputDescription || ''}
-            onChange={(e) => setInputDescription(String(e.target.value))}
-          />
-        ) : (
-          <h3 className="Text" style={{ color: 'black' }}>
-            <label>Description: </label>
-            {currentCollection.description}
-          </h3>
-        )}
-        {isEditing ? (
-          <input
-            className="mr-2 border border-gray-300 p-2"
-            placeholder="Qauntity"
+            placeholder="Passengers"
             value={inputQuantity || ''}
             onChange={(e) => setInputQuantity(Number(e.target.value))}
           />
         ) : (
           <h3 className="Text" style={{ color: 'black' }}>
             <label>Quantity: </label>
-            {currentCollection.quantity_stocks}
-          </h3>
-        )}
-        {isEditing ? (
-          <input
-            className="mr-2 border border-gray-300 p-2"
-            placeholder="Price"
-            value={inputPrice || ''}
-            onChange={(e) => setInputPrice(Number(e.target.value))}
-          />
-        ) : (
-          <h3 className="Text" style={{ color: 'black' }}>
-            <label>Price: </label>
-            {currentCollection.price}
+            {currentRide.quantity_passengers}
           </h3>
         )}
 
         {/* Action buttons */}
 
-        {isCollectionOwner ? (
+        {isRideOwner ? (
           <div>
             {isEditing ? (
               <button
                 className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-                onClick={handleUpdateCollection}
+                onClick={handleUpdateRide}
               >
                 UPDATE
               </button>
@@ -220,7 +198,7 @@ const CollapsibleCollection = (props: Props) => {
             ) : (
               <button
                 className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                onClick={handleClickDeleteCollection}
+                onClick={handleClickDeleteRide}
               >
                 Delete
               </button>
@@ -232,7 +210,7 @@ const CollapsibleCollection = (props: Props) => {
               justifySelf: 'end',
             }}
           >
-            <BidDialog currentCollection={currentCollection} handleCreateBid={handleCreateBid} />
+            <DriverDialog currentRide={currentRide} handleCreateDriver={handleCreateDriver} />
           </div>
         )}
         <Collapsible.Trigger
@@ -247,33 +225,33 @@ const CollapsibleCollection = (props: Props) => {
 
       <Collapsible.Content>
         {/* Sneaky sneaky filtering & sorting */}
-        {fetchCollectionBids.data?.Bids.length &&
-          fetchCollectionBids.data.Bids.sort((a, b) => b.price - a.price)
-            .filter((bid) => bid.user_id !== currentCollection.user_id)
-            .map((bid) => (
+        {fetchRideDriver.data?.Driver.length &&
+          fetchRideDriver.data.Driver.sort((a, b) => b.price - a.price)
+            .filter((driver) => driver.user_id !== currentRide.user_id)
+            .map((driver) => (
               <div
-                key={bid.id}
+                key={driver.id}
                 className="my-1 ml-[50px] grid grid-cols-4 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
               >
                 <div>
                   <span className="Text">
                     <label>Buyer: </label>
-                    {bid.user_id}
+                    {driver.user_id}
                   </span>
                 </div>
                 <div>
                   <span className="Text">
                     <label>Price: </label>
-                    {bid.price}
+                    {driver.price}
                   </span>
                 </div>
                 <div>
                   <span className="Text">
                     <label>Status: </label>
-                    {bid.status}
+                    {driver.status}
                   </span>
                 </div>
-                {activeUser.id === bid.user_id ? (
+                {activeUser.id === driver.user_id ? (
                   <div
                     style={{
                       justifySelf: 'end',
@@ -281,18 +259,18 @@ const CollapsibleCollection = (props: Props) => {
                   >
                     <button
                       className="m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                      onClick={() => handleClickDeleteBid(bid.id)}
+                      onClick={() => handleClickDeleteDriver(driver.id)}
                     >
                       Delete
                     </button>
                   </div>
                 ) : null}
-                {isCollectionOwner && bid.status === 'Pending' ? (
+                {isRideOwner && driver.status === 'Pending' ? (
                   <div className={styles.AcceptRejectButtonGroup}>
                     <div className={styles.AcceptRejectButton}>
                       <button
                         className="accept-reject-btn m14 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-                        onClick={() => handleClickAcceptBid(bid.id)}
+                        onClick={() => handleClickAcceptDriver(driver.id)}
                       >
                         Accept
                       </button>
@@ -303,7 +281,7 @@ const CollapsibleCollection = (props: Props) => {
                           'accept-reject-btn m14 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 ' +
                           styles.AcceptRejectButton
                         }
-                        onClick={() => handleClickRejectBid(bid.id)}
+                        onClick={() => handleClickRejectDriver(driver.id)}
                       >
                         Reject
                       </button>
@@ -317,4 +295,4 @@ const CollapsibleCollection = (props: Props) => {
   );
 };
 
-export default CollapsibleCollection;
+export default CollapsibleRide;

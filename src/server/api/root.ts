@@ -1,5 +1,5 @@
-import bids from '~/server/api/routers/bids';
-import collections from '~/server/api/routers/collections';
+import drivers from '~/server/api/routers/drivers';
+import rides from '~/server/api/routers/rides';
 import users from '~/server/api/routers/users';
 import { createTRPCRouter } from '~/server/api/trpc';
 
@@ -11,8 +11,8 @@ import { createTRPCRouter } from '~/server/api/trpc';
 // NOTE: Artificial latency of 1000ms
 export const appRouter = createTRPCRouter({
   users,
-  collections,
-  bids,
+  rides,
+  drivers,
 });
 
 // export type definition of API

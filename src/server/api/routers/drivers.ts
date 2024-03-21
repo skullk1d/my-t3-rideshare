@@ -3,13 +3,15 @@ import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 import { idListSchema } from './users';
 
-export const bidSchema = z.object({
+export const driverSchema = z.object({
   price: z.number(),
+  distance: z.number(),
   status: z.enum(['Pending', 'Accepted', 'Rejected']),
+  car_model: z.string(),
   user_id: z.number(),
-  collection_id: z.number(),
+  ride_id: z.number(),
 });
-export const bidUpdateSchema = bidSchema.merge(
+export const driverUpdateSchema = driverSchema.merge(
   z.object({
     id: z.number(),
   }),
@@ -23,13 +25,13 @@ export default createTRPCRouter({
     if (input?.length) {
       // One or Many
       if (input.length === 1) {
-        res = ctx.db.bids.findFirst({
+        res = ctx.db.driver.findFirst({
           where: {
             id: input[0],
           },
         });
       } else {
-        res = ctx.db.bids.findMany({
+        res = ctx.db.driver.findMany({
           orderBy: { price: 'desc' },
           where: {
             id: { in: input },
@@ -38,7 +40,7 @@ export default createTRPCRouter({
       }
     } else {
       // All
-      res = ctx.db.bids.findMany({
+      res = ctx.db.driver.findMany({
         orderBy: { price: 'desc' },
       });
     }
@@ -47,21 +49,21 @@ export default createTRPCRouter({
 
     return res;
   }),
-  create: publicProcedure.input(bidSchema).mutation(async ({ input, ctx }) => {
+  create: publicProcedure.input(driverSchema).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    return ctx.db.bids.create({
-      data: bidSchema.parse(input),
+    return ctx.db.driver.create({
+      data: driverSchema.parse(input),
     });
   }),
-  update: publicProcedure.input(bidUpdateSchema).mutation(async ({ input, ctx }) => {
+  update: publicProcedure.input(driverUpdateSchema).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    return ctx.db.bids.update({
+    return ctx.db.driver.update({
       where: {
         id: input.id,
       },
-      data: bidSchema.parse(input),
+      data: driverSchema.parse(input),
     });
   }),
   delete: publicProcedure.input(idListSchema).mutation(async ({ input, ctx }) => {
@@ -70,13 +72,13 @@ export default createTRPCRouter({
     if (input) {
       // One or Many
       if (input.length === 1) {
-        res = ctx.db.bids.delete({
+        res = ctx.db.driver.delete({
           where: {
             id: input[0],
           },
         });
       } else if (input.length) {
-        res = ctx.db.bids.deleteMany({
+        res = ctx.db.driver.deleteMany({
           where: {
             id: { in: input },
           },
@@ -84,7 +86,7 @@ export default createTRPCRouter({
       }
     } else {
       // All
-      res = ctx.db.bids.deleteMany();
+      res = ctx.db.driver.deleteMany();
     }
 
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
@@ -94,33 +96,33 @@ export default createTRPCRouter({
   accept: publicProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    // find parent collection
-    const bid = await ctx.db.bids.findFirst({
+    // find parent ride
+    const driver = await ctx.db.driver.findFirst({
       where: {
         id: input,
       },
     });
-    const collection = await ctx.db.collections.findFirst({
+    const ride = await ctx.db.ride.findFirst({
       where: {
-        id: bid?.collection_id,
+        id: driver?.ride_id,
       },
       select: {
-        Bids: true,
+        Driver: true,
       },
     });
 
     // reject siblings
-    await ctx.db.bids.updateMany({
+    await ctx.db.driver.updateMany({
       where: {
-        id: { in: (collection?.Bids ?? []).map((b) => b.id), not: input },
+        id: { in: (ride?.Driver ?? []).map((b) => b.id), not: input },
       },
       data: {
         status: 'Rejected',
       },
     });
 
-    // accept this bid
-    return ctx.db.bids.update({
+    // accept this driver
+    return ctx.db.driver.update({
       where: {
         id: input,
       },
@@ -132,8 +134,8 @@ export default createTRPCRouter({
   reject: publicProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    // reject this bid
-    return ctx.db.bids.update({
+    // reject this driver
+    return ctx.db.driver.update({
       where: {
         id: input,
       },

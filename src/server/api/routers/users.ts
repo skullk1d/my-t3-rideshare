@@ -11,13 +11,13 @@ export default createTRPCRouter({
     if (input?.length) {
       // One or Many
       if (input.length === 1) {
-        res = ctx.db.users.findFirst({
+        res = ctx.db.user.findFirst({
           where: {
             id: input[0],
           },
         });
       } else {
-        res = ctx.db.users.findMany({
+        res = ctx.db.user.findMany({
           where: {
             id: { in: input },
           },
@@ -26,12 +26,12 @@ export default createTRPCRouter({
       }
     } else {
       // All
-      res = ctx.db.users.findMany();
+      res = ctx.db.user.findMany();
     }
 
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    // NOTE: Intentionally not "include"-ing collection relational data to reduce overhead
+    // NOTE: Intentionally not "include"-ing ride relational data to reduce overhead
     return res;
   }),
   // TODO:

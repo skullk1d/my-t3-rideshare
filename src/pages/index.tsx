@@ -1,24 +1,20 @@
-import { type Collections } from '@prisma/client';
+import { type Ride } from '@prisma/client';
 import { useState } from 'react';
-import CollapsibleCollection, {
-  type Props as CollapsibleCollectionProps,
-} from '~/components/CollapsibleCollection';
+import CollapsibleRide, { type Props as CollapsibleRideProps } from '~/components/CollapsibleRide';
 import ToggleUser from '~/components/ToggleUser';
 import { api } from '~/utils/api';
 
 export default function Home() {
-  const [collectionIds] = useState<number[]>([]);
+  const [rideIds] = useState<number[]>([]);
 
-  const fetchCollections = api.collections.get.useQuery(collectionIds);
+  const fetchRides = api.rides.get.useQuery(rideIds);
 
-  // NOTE: Collections & Bids intersection assertion is congruent with Collections query payload
-  const fetchCollectionsData = fetchCollections.data as Array<
-    CollapsibleCollectionProps['collection']
-  >;
+  // NOTE: Ride & Driver intersection assertion is congruent with Ride query payload
+  const fetchRidesData = fetchRides.data as Array<CollapsibleRideProps['ride']>;
 
-  const handleDeleteCollection = async (res?: Collections) => {
+  const handleDeleteRide = async (res?: Ride) => {
     if (res) {
-      await fetchCollections.refetch();
+      await fetchRides.refetch();
     }
   };
 
@@ -28,16 +24,16 @@ export default function Home() {
 
       <ToggleUser />
 
-      <h4 className="mb-1 mt-4 text-2xl font-bold">Collections:</h4>
+      <h4 className="mb-1 mt-4 text-2xl font-bold">Ride:</h4>
 
       <div className="mb-8">
-        {fetchCollectionsData?.length &&
-          fetchCollectionsData.map((collection) => (
-            <CollapsibleCollection
-              key={collection.id}
-              collection={collection}
+        {fetchRidesData?.length &&
+          fetchRidesData.map((ride) => (
+            <CollapsibleRide
+              key={ride.id}
+              ride={ride}
               isOpen={false}
-              handleDeleteCollection={handleDeleteCollection}
+              handleDeleteRide={handleDeleteRide}
             />
           ))}
       </div>

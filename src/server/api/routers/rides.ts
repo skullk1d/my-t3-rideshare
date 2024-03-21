@@ -1,18 +1,18 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
-import { bidSchema, bidUpdateSchema } from './bids';
+import { driverSchema, driverUpdateSchema } from './drivers';
 import { idListSchema } from './users';
 
-export const collectionSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  quantity_stocks: z.number(),
-  price: z.number(),
+export const rideSchema = z.object({
+  app_name: z.string(),
+  address: z.string(),
+  quantity_passengers: z.number(),
+  requested_at: z.date(),
   user_id: z.number(),
-  Bids: z.array(bidUpdateSchema),
+  Driver: z.array(driverUpdateSchema),
 });
-export const collectionUpdateSchema = collectionSchema.omit({ user_id: true, Bids: true }).merge(
+export const rideUpdateSchema = rideSchema.omit({ user_id: true, Driver: true }).merge(
   z.object({
     id: z.number(),
   }),
@@ -26,31 +26,31 @@ export default createTRPCRouter({
     if (input?.length) {
       // One or Many
       if (input.length === 1) {
-        res = ctx.db.collections.findFirst({
+        res = ctx.db.ride.findFirst({
           where: {
             id: input[0],
           },
           include: {
-            Bids: true,
+            Driver: true,
           },
         });
       } else {
-        res = ctx.db.collections.findMany({
+        res = ctx.db.ride.findMany({
           orderBy: { id: 'asc' },
           where: {
             id: { in: input },
           },
           include: {
-            Bids: true,
+            Driver: true,
           },
         });
       }
     } else {
       // All
-      res = ctx.db.collections.findMany({
+      res = ctx.db.ride.findMany({
         orderBy: { id: 'asc' },
         include: {
-          Bids: true,
+          Driver: true,
         },
       });
     }
@@ -59,40 +59,40 @@ export default createTRPCRouter({
 
     return res;
   }),
-  getBids: publicProcedure.input(z.number()).query(async ({ input, ctx }) => {
-    // Get all bids of a specified collection
+  getDriver: publicProcedure.input(z.number()).query(async ({ input, ctx }) => {
+    // Get all drivers of a specified ride
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    return ctx.db.collections.findFirst({
+    return ctx.db.ride.findFirst({
       where: {
         id: input,
       },
       select: {
-        Bids: true,
+        Driver: true,
       },
       orderBy: { id: 'desc' },
     });
   }),
-  create: publicProcedure.input(collectionSchema).mutation(async ({ input, ctx }) => {
+  create: publicProcedure.input(rideSchema).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    return ctx.db.collections.create({
+    return ctx.db.ride.create({
       data: {
-        ...collectionSchema.parse(input),
-        Bids: {
-          create: z.array(bidSchema).parse(input.Bids),
+        ...rideSchema.parse(input),
+        Driver: {
+          create: z.array(driverSchema).parse(input.Driver),
         },
       },
     });
   }),
-  update: publicProcedure.input(collectionUpdateSchema).mutation(async ({ input, ctx }) => {
+  update: publicProcedure.input(rideUpdateSchema).mutation(async ({ input, ctx }) => {
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
 
-    return ctx.db.collections.update({
+    return ctx.db.ride.update({
       where: {
         id: input.id,
       },
-      data: collectionUpdateSchema.parse(input),
+      data: rideUpdateSchema.parse(input),
     });
   }),
   delete: publicProcedure.input(idListSchema).mutation(async ({ input, ctx }) => {
@@ -101,13 +101,13 @@ export default createTRPCRouter({
     if (input) {
       // One or Many
       if (input.length === 1) {
-        res = ctx.db.collections.delete({
+        res = ctx.db.ride.delete({
           where: {
             id: input[0],
           },
         });
       } else if (input.length) {
-        res = ctx.db.collections.deleteMany({
+        res = ctx.db.ride.deleteMany({
           where: {
             id: { in: input },
           },
@@ -115,7 +115,7 @@ export default createTRPCRouter({
       }
     } else {
       // All
-      res = ctx.db.collections.deleteMany();
+      res = ctx.db.ride.deleteMany();
     }
 
     /* await new Promise((resolve) => setTimeout(resolve, 1000)); */
