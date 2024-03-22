@@ -24,7 +24,7 @@ export default function Home() {
 
       <ToggleUser />
 
-      <h4 className="mb-1 mt-4 text-2xl font-bold">Ride:</h4>
+      <h4 className="mb-1 mt-4 text-2xl font-bold">Ride Requests:</h4>
 
       <div className="mb-8">
         {fetchRidesData?.length &&

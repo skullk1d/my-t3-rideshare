@@ -25,6 +25,7 @@ const DialogDemo = (props: Props) => {
 
   const handleChangePrice = (v: string) => setPrice(parseFloat(v));
   const handleChangeDistance = (v: string) => setDistance(parseFloat(v));
+  const handleChangeCarModel = (v: string) => setCarModel(v);
 
   const handleSubmitDriver = async () => {
     try {
@@ -48,7 +49,7 @@ const DialogDemo = (props: Props) => {
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button className="m-1 rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600">
-          Driver
+          Offer ride
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -94,9 +95,10 @@ const DialogDemo = (props: Props) => {
             <input
               className="mr-2 border border-gray-300 p-2"
               id="name"
+              placeholder="Car model"
               defaultValue="Civic"
               type="text"
-              onChange={(e) => handleChangeDistance(e.target.value)}
+              onChange={(e) => handleChangeCarModel(e.target.value)}
             />
           </fieldset>
           <div

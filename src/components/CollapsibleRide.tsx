@@ -132,14 +132,15 @@ const CollapsibleRide = (props: Props) => {
         }}
       >
         <h3 className="Text" style={{ color: 'black' }}>
-          {`User: (${currentRide.user_id})`}
+          <label className={styles.RowLabel}>Passenger: </label>
+          {`${currentRide.user_id}`}
         </h3>
         <h3 className="Text" style={{ color: 'black' }}>
-          <label>Requested on:</label>
+          <label className={styles.RowLabel}>Requested on: </label>
           {currentRide.requested_at.toLocaleString()}
         </h3>
         <h3 className="Text" style={{ color: 'black' }}>
-          <label>Vendor:</label>
+          <label className={styles.RowLabel}>Vendor: </label>
           {currentRide.app_name}
         </h3>
         {isEditing ? (
@@ -151,20 +152,20 @@ const CollapsibleRide = (props: Props) => {
           />
         ) : (
           <h3 className="Text" style={{ color: 'black' }}>
-            <label>Address: </label>
+            <label className={styles.RowLabel}>Address: </label>
             {currentRide.address}
           </h3>
         )}
         {isEditing ? (
           <input
             className="mr-2 border border-gray-300 p-2"
-            placeholder="Passengers"
+            placeholder="Total passengers"
             value={inputQuantity || ''}
             onChange={(e) => setInputQuantity(Number(e.target.value))}
           />
         ) : (
           <h3 className="Text" style={{ color: 'black' }}>
-            <label>Quantity: </label>
+            <label className={styles.RowLabel}>Total passengers: </label>
             {currentRide.quantity_passengers}
           </h3>
         )}
@@ -172,7 +173,12 @@ const CollapsibleRide = (props: Props) => {
         {/* Action buttons */}
 
         {isRideOwner ? (
-          <div>
+          <div
+            style={{
+              justifySelf: 'end',
+              minWidth: '200px',
+            }}
+          >
             {isEditing ? (
               <button
                 className="m-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
@@ -226,28 +232,34 @@ const CollapsibleRide = (props: Props) => {
       <Collapsible.Content>
         {/* Sneaky sneaky filtering & sorting */}
         {fetchRideDriver.data?.Driver.length &&
-          fetchRideDriver.data.Driver.sort((a, b) => b.price - a.price)
+          fetchRideDriver.data.Driver.sort((a, b) => a.distance - b.distance)
             .filter((driver) => driver.user_id !== currentRide.user_id)
             .map((driver) => (
               <div
                 key={driver.id}
-                className="my-1 ml-[50px] grid grid-cols-4 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
+                className="my-1 ml-[50px] grid grid-cols-5 gap-4 rounded border border-gray-300 bg-white p-4 shadow"
               >
                 <div>
                   <span className="Text">
-                    <label>Buyer: </label>
+                    <label className={styles.RowLabel}>Driver: </label>
                     {driver.user_id}
                   </span>
                 </div>
                 <div>
                   <span className="Text">
-                    <label>Price: </label>
+                    <label className={styles.RowLabel}>Distance: </label>
+                    {`${driver.distance} km`}
+                  </span>
+                </div>
+                <div>
+                  <span className="Text">
+                    <label className={styles.RowLabel}>Price: </label>
                     {driver.price}
                   </span>
                 </div>
                 <div>
                   <span className="Text">
-                    <label>Status: </label>
+                    <label className={styles.RowLabel}>Status: </label>
                     {driver.status}
                   </span>
                 </div>
